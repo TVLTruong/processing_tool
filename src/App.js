@@ -1,7 +1,7 @@
 import React from "react";
 // import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FileUploader from "./FileUploader";
-import { HashRouter as Router } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
