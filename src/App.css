@@ -36,3 +36,178 @@
     transform: rotate(360deg);
   }
 }
+
+
+.csv-table-container {
+  width: 95%; /* Chiều rộng của block */
+  max-height: 400px; /* Chiều cao tối đa của block */
+  overflow: auto; /* Hiển thị thanh cuộn khi cần */
+  margin: 20px auto; /* Căn giữa block và khoảng cách phía trên */
+  border: 1px solid #ddd; /* Viền cho block */
+}
+
+.csv-table {
+  width: 100%; /* Chiều rộng bảng */
+  border-collapse: collapse; /* Gộp viền các ô */
+}
+
+.csv-table th,
+.csv-table td {
+  border: 1px solid #ddd; /* Viền cho các ô */
+  padding: 8px; /* Khoảng cách bên trong ô */
+  text-align: left; /* Căn lề văn bản */
+}
+
+.csv-table th {
+  background-color: #f2f2f2; /* Màu nền cho header */
+}
+
+.upload-container {
+  border: 2px dashed #ccc; /* Viền đứt nét */
+  padding: 25px; /* Giảm padding để thu nhỏ khung */
+  text-align: center; /* Căn giữa nội dung */
+  margin: 20px auto; /* Căn giữa khung theo chiều ngang */
+  width: 85%; /* Chiều rộng của khung */
+  height: 10%; /* Chiều cao của khung */
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+}
+
+.upload-container label {
+  cursor: pointer; /* Hiển thị con trỏ khi di chuột vào */
+  color: #555; /* Màu chữ */
+  font-size: 14px; /* Kích thước chữ */
+}
+
+/* Popup overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Popup content */
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%; /* Chiều rộng lớn hơn để chứa nhiều cột */
+  max-width: 800px; /* Giới hạn chiều rộng tối đa */
+  max-height: 80vh; /* Giới hạn chiều cao tối đa */
+  overflow: auto; /* Hiển thị thanh cuộn khi cần */
+  position: relative;
+}
+
+/* Nút đóng popup */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Bảng trong popup */
+.popup-table {
+  width: 100%; /* Chiều rộng tối đa */
+  border-collapse: collapse; /* Gộp viền các ô */
+  white-space: nowrap; /* Ngăn nội dung xuống dòng */
+}
+
+.popup-table th,
+.popup-table td {
+  border: 1px solid #ddd; /* Viền cho các ô */
+  padding: 8px; /* Khoảng cách bên trong ô */
+  text-align: left; /* Căn trái nội dung */
+  min-width: 100px; /* Độ rộng tối thiểu của cột */
+}
+
+.popup-table th {
+  background-color: #f2f2f2; /* Màu nền cho header */
+}
+
+/* Checkbox trong popup */
+.popup-table input[type="checkbox"] {
+  margin-right: 8px; /* Khoảng cách giữa checkbox và tên cột */
+}
+
+/* Nút chung */
+button {
+  padding: 10px 20px; /* Kích thước nút */
+  border: none; /* Bỏ viền */
+  border-radius: 5px; /* Bo góc */
+  font-size: 14px; /* Kích thước chữ */
+  cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng chuyển đổi */
+}
+
+/* Nút Read File */
+button.read-file {
+  background-color: #007bff; /* Màu nền */
+  color: white; /* Màu chữ */
+}
+
+button.read-file:hover {
+  background-color: #0056b3; /* Màu nền khi hover */
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+/* Nút Đổi File */
+button.change-file {
+  background-color: #6c757d; /* Màu nền */
+  color: white; /* Màu chữ */
+}
+
+button.change-file:hover {
+  background-color: #5a6268; /* Màu nền khi hover */
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+/* Nút Xoá cột */
+button.delete-columns {
+  background-color: #dc3545; /* Màu nền */
+  color: white; /* Màu chữ */
+}
+
+button.delete-columns:hover {
+  background-color: #c82333; /* Màu nền khi hover */
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+/* Nút Download */
+button.download {
+  background-color: #28a745; /* Màu nền */
+  color: white; /* Màu chữ */
+}
+
+button.download:hover {
+  background-color: #218838; /* Màu nền khi hover */
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+/* Nút trong popup */
+.popup-content button {
+  margin: 5px; /* Khoảng cách giữa các nút */
+}
+
+/* Nút đóng popup */
+.close-button {
+  background-color: #ffc107; /* Màu nền */
+  color: black; /* Màu chữ */
+  padding: 5px 10px; /* Kích thước nút */
+  border-radius: 50%; /* Bo tròn */
+}
+
+.close-button:hover {
+  background-color: #e0a800; /* Màu nền khi hover */
+  transform: scale(1.1); /* Phóng to nhẹ khi hover */
+}
