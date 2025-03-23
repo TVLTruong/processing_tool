@@ -15,9 +15,6 @@
     "web-vitals": "^2.1.4"
   },
   "homepage": "https://TVLTruong.github.io/pressing_tool/",
-  "gh-pages": {
-    "repo": "https://github.com/TVLTruong/pressing_tool.git"
-  },
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
