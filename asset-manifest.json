@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/processing_tool/static/css/main.baa45b2a.css",
+    "main.js": "/processing_tool/static/js/main.f581fd0c.js",
+    "index.html": "/processing_tool/index.html",
+    "main.baa45b2a.css.map": "/processing_tool/static/css/main.baa45b2a.css.map",
+    "main.f581fd0c.js.map": "/processing_tool/static/js/main.f581fd0c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.baa45b2a.css",
+    "static/js/main.f581fd0c.js"
+  ]
+}

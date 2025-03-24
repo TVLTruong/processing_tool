@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        // Redirect tất cả request không tìm thấy về index.html (trang chính của React)
+        var redirectTo = window.location.pathname.replace("/pressing_tool", "");
+        window.location.replace("/pressing_tool" + redirectTo);
+    </script>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+</body>
+</html>
