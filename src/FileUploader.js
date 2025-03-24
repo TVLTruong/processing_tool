@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./App.css"; // Import file CSS
+import Papa from "papaparse";
 
 const FileUploader = () => {
   const [file, setFile] = useState(null);
@@ -50,31 +51,58 @@ const FileUploader = () => {
     e.stopPropagation();
   };
 
-  const handleReadFile = async () => {
+  // const handleReadFile = async () => {
+  //   if (!file) {
+  //     setError("Vui lòng chọn file trước khi đọc.");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+
+  //   try {
+  //     const response = await axios.post(
+  //       "https://tvltruong1594-processing-tool.hf.space/read-csv",
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //       }
+  //     );
+  //     setSuccess("File đã được đọc thành công.");
+  //     setCsvData(response.data.data);
+  //     setColumns(response.data.columns);
+  //   } catch (err) {
+  //     setError("Đã xảy ra lỗi khi đọc file: " + err.message);
+  //   }
+  // };
+
+  const handleReadFile = () => {
     if (!file) {
       setError("Vui lòng chọn file trước khi đọc.");
       return;
     }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await axios.post(
-        "https://tvltruong1594-processing-tool.hf.space/read-csv",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+  
+    Papa.parse(file, {
+      complete: (result) => {
+        try {
+          const columns = result.meta.fields; // Lấy danh sách cột
+          const data = result.data; // Dữ liệu dạng mảng object
+          
+          setColumns(columns);
+          setCsvData(data);
+          setSuccess("File đã được đọc thành công.");
+        } catch (err) {
+          setError("Đã xảy ra lỗi khi đọc file: " + err.message);
         }
-      );
-      setSuccess("File đã được đọc thành công.");
-      setCsvData(response.data.data);
-      setColumns(response.data.columns);
-    } catch (err) {
-      setError("Đã xảy ra lỗi khi đọc file: " + err.message);
-    }
+      },
+      header: true, // Tự động coi hàng đầu tiên là tiêu đề
+      skipEmptyLines: true, // Bỏ qua các dòng trống
+      error: () => {
+        setError("Không thể đọc file.");
+      },
+    });
   };
 
   const handleDeleteColumns = () => {
