@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-// import axios from "axios";
+import axios from "axios";
 import "./App.css"; // Import file CSS
-import Papa from "papaparse";
+// import Papa from "papaparse";
 
 const FileUploader = () => {
   const [file, setFile] = useState(null);
@@ -51,75 +51,34 @@ const FileUploader = () => {
     e.stopPropagation();
   };
 
-  // const handleReadFile = async () => {
-  //   if (!file) {
-  //     setError("Vui lòng chọn file trước khi đọc.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-
-  //   try {
-  //     const response = await axios.post(
-  //       "https://tvltruong1594-processing-tool.hf.space/read-csv",
-  //       formData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //       }
-  //     );
-  //     setSuccess("File đã được đọc thành công.");
-  //     setCsvData(response.data.data);
-  //     setColumns(response.data.columns);
-  //   } catch (err) {
-  //     setError("Đã xảy ra lỗi khi đọc file: " + err.message);
-  //   }
-  // };
-
-  const handleReadFile = () => {
+  const handleReadFile = async () => {
     if (!file) {
       setError("Vui lòng chọn file trước khi đọc.");
       return;
     }
-  
-    Papa.parse(file, {
-      complete: (result) => {
-        try {
-          const columns = result.meta.fields; // Lấy danh sách cột
-          let data = result.data; // Dữ liệu dạng mảng object
-  
-          if (!columns || !data) {
-            setError("File không chứa dữ liệu hợp lệ.");
-            return;
-          }
-  
-          // Lọc bỏ các hàng rỗng hoặc không có giá trị thực sự
-          data = data.filter(row => 
-            row && Object.values(row).some(value => value && value.trim() !== "")
-          );
-  
-          if (data.length === 0) {
-            setError("File không chứa dữ liệu hợp lệ sau khi lọc.");
-            return;
-          }
-  
-          // Cập nhật state
-          setColumns(columns);
-          setCsvData(data);
-          setSuccess(`File đã được đọc thành công. Tìm thấy ${data.length} dòng dữ liệu.`);
-        } catch (err) {
-          setError("Đã xảy ra lỗi khi đọc file: " + err.message);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        "https://tvltruong1594-processing-tool.hf.space/read-csv",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      },
-      header: true, // Tự động coi hàng đầu tiên là tiêu đề
-      skipEmptyLines: true, // Loại bỏ các dòng trống
-      error: () => {
-        setError("Không thể đọc file.");
-      },
-    });
+      );
+      setSuccess("File đã được đọc thành công.");
+      setCsvData(response.data.data);
+      setColumns(response.data.columns);
+    } catch (err) {
+      setError("Đã xảy ra lỗi khi đọc file: " + err.message);
+    }
   };
+
+
 
   const handleDeleteColumns = () => {
     setShowDeletePopup(true);
