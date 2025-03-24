@@ -50,7 +50,6 @@ const FileUploader = () => {
     e.stopPropagation();
   };
 
-
   const handleReadFile = async () => {
     if (!file) {
       setError("Vui lòng chọn file trước khi đọc.");
@@ -122,7 +121,6 @@ const FileUploader = () => {
     setSelectedColumns(newSelectedColumns);
   };
   
-
   const handleDeleteSelectedColumns = () => {
     const newColumns = columns.filter(col => !selectedColumns.includes(col));
     const newData = csvData.map(row => {
@@ -150,6 +148,86 @@ const FileUploader = () => {
     setSelectedColumns(selectedColumns.length === columns.length ? [] : [...columns]);
   };
   
+  // Hàm mới để chuyển đổi định dạng dữ liệu
+  const handleTransformData = () => {
+    try {
+      // Kiểm tra cấu trúc dữ liệu
+      if (!csvData.length || !columns.includes('Review') || 
+          !columns.includes('attribute') || !columns.includes('entity') || 
+          !columns.includes('sentiment')) {
+        setError("Định dạng dữ liệu không hợp lệ. Cần có các cột Review, attribute, entity và sentiment.");
+        return;
+      }
+  
+      // Các cột cần thiết cho định dạng mới (đã loại bỏ *)
+      const newColumns = [
+        'Review',
+        'FACILITIES#CLEANLINESS', 'FACILITIES#COMFORT', 'FACILITIES#DESIGN&FEATURES', 
+        'FACILITIES#GENERAL', 'FACILITIES#MISCELLANEOUS', 'FACILITIES#PRICES', 
+        'FACILITIES#QUALITY', 'FOOD&DRINKS#MISCELLANEOUS', 'FOOD&DRINKS#PRICES', 
+        'FOOD&DRINKS#QUALITY', 'FOOD&DRINKS#STYLE&OPTIONS', 'HOTEL#CLEANLINESS', 
+        'HOTEL#COMFORT', 'HOTEL#DESIGN&FEATURES', 'HOTEL#GENERAL', 'HOTEL#MISCELLANEOUS', 
+        'HOTEL#PRICES', 'HOTEL#QUALITY', 'LOCATION#GENERAL', 'ROOMS#CLEANLINESS', 
+        'ROOMS#COMFORT', 'ROOMS#DESIGN&FEATURES', 'ROOMS#GENERAL', 'ROOMS#MISCELLANEOUS', 
+        'ROOMS#PRICES', 'ROOMS#QUALITY', 'ROOM_AMENITIES#CLEANLINESS', 
+        'ROOM_AMENITIES#COMFORT', 'ROOM_AMENITIES#DESIGN&FEATURES', 
+        'ROOM_AMENITIES#GENERAL', 'ROOM_AMENITIES#MISCELLANEOUS', 'ROOM_AMENITIES#PRICES', 
+        'ROOM_AMENITIES#QUALITY', 'SERVICE#GENERAL'
+      ];
+  
+      // Tạo dữ liệu mới
+      const newData = csvData.map(row => {
+        // Khởi tạo đối tượng mới với tất cả các cột được đặt thành giá trị 0
+        const newRow = { Review: row.Review };
+        newColumns.forEach(col => {
+          if (col !== 'Review') {
+            newRow[col] = 0; // Điền giá trị 0 cho các cột không có dữ liệu
+          }
+        });
+  
+        try {
+          // Phân tích chuỗi JSON từ các cột
+          const attributes = JSON.parse(row.attribute);
+          const entities = JSON.parse(row.entity);  
+          const sentiments = JSON.parse(row.sentiment);
+  
+          // Xử lý từng attribute
+          for (let i = 0; i < attributes.length; i++) {
+            const attr = attributes[i];
+            const entity = entities[i];
+            const sentiment = sentiments[i];
+  
+            if (attr && entity && sentiment) {
+              const entityLabel = entity.labels[0]; // Lấy entity đầu tiên (HOTEL, ROOMS, etc.)
+              const attrLabel = attr.labels[0];    // Lấy attribute đầu tiên (COMFORT, DESIGN&FEATURES, etc.)
+              const sentimentLabel = sentiment.labels[0]; // Lấy sentiment (positive, negative)
+              
+              // Tạo key cho cột mới
+              const columnKey = `${entityLabel}#${attrLabel}`;
+              
+              // Nếu cột tồn tại trong định dạng mới
+              if (newColumns.includes(columnKey)) {
+                // Chuyển đổi sentiment thành 1 hoặc 2
+                const sentimentValue = sentimentLabel === 'positive' ? 1 : 2;
+                newRow[columnKey] = sentimentValue;
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Lỗi khi xử lý hàng:", row, e);
+        }
+  
+        return newRow;
+      });
+  
+      // Cập nhật state với dữ liệu và cột mới
+      setColumns(newColumns);
+      setCsvData(newData);
+      setSuccess("Dữ liệu đã được chuyển đổi thành công.");
+    } catch (err) {
+      setError("Đã xảy ra lỗi khi chuyển đổi dữ liệu: " + err.message);
+    }
+  };
 
   return (
     <div>
@@ -188,11 +266,14 @@ const FileUploader = () => {
       {/* Hiển thị tiêu đề bảng */}
       {csvData.length > 0 && <h2>Nội dung file CSV</h2>}
 
-      {/* Nút Xoá cột và Download (chỉ hiện khi có dữ liệu) */}
+      {/* Thêm nút Chuyển đổi bên cạnh nút Xoá cột và Download */}
       {csvData.length > 0 && (
         <div style={{ marginTop: '20px', marginBottom: '10px', textAlign: 'right', marginRight: '5%' }}>
           <button className="delete-columns" onClick={handleDeleteColumns} style={{ marginRight: '10px' }}>
             Xoá cột
+          </button>
+          <button className="transform-data" onClick={handleTransformData} style={{ marginRight: '10px' }}>
+            Chuyển đổi dữ liệu
           </button>
           <button className="download" onClick={handleDownload}>
             Download
