@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './App.css'; // Đảm bảo import file CSS
+import React, { useState } from "react";
+import axios from "axios";
+import "./App.css"; // Import file CSS
 
 const FileUploader = () => {
   const [file, setFile] = useState(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [csvData, setCsvData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -13,35 +13,68 @@ const FileUploader = () => {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type === 'text/csv') {
+    if (selectedFile && selectedFile.type === "text/csv") {
       setFile(selectedFile);
-      setError('');
+      setError("");
     } else {
       setFile(null);
-      setError('Vui lòng chọn file CSV.');
+      setError("Vui lòng chọn file CSV.");
     }
   };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.dataTransfer.files.length > 0) {
+      const droppedFile = e.dataTransfer.files[0];
+      processFile(droppedFile);
+    }
+  };
+  
+  const processFile = (selectedFile) => {
+    if (selectedFile && selectedFile.type === "text/csv") {
+      setFile(selectedFile);
+      setError("");
+      setSuccess("File đã được chọn thành công.");
+    } else {
+      setFile(null);
+      setError("Vui lòng chọn file CSV.");
+      setSuccess("");
+    }
+  };
+
+  // Chặn hành vi mặc định của trình duyệt khi kéo file
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+
   const handleReadFile = async () => {
     if (!file) {
-      setError('Vui lòng chọn file trước khi đọc.');
+      setError("Vui lòng chọn file trước khi đọc.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await axios.post('http://localhost:5000/read-csv', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      setSuccess('File đã được đọc thành công.');
+      const response = await axios.post(
+        "https://tvltruong1594-processing-tool.hf.space/read-csv",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setSuccess("File đã được đọc thành công.");
       setCsvData(response.data.data);
       setColumns(response.data.columns);
     } catch (err) {
-      setError('Đã xảy ra lỗi khi đọc file: ' + err.message);
+      setError("Đã xảy ra lỗi khi đọc file: " + err.message);
     }
   };
 
@@ -50,36 +83,25 @@ const FileUploader = () => {
   };
 
   const handleDownload = () => {
-    // Tạo header của CSV (tên các cột)
     const header = columns.join(",") + "\n";
-  
-    // Tạo nội dung của CSV từ dữ liệu
-    const rows = csvData.map((row) =>
-      columns
-        .map((col) => {
-          const value = row[col];
-          // Nếu giá trị là chuỗi, bọc nó trong dấu ngoặc kép
-          if (typeof value === "string") {
-            return `"${value}"`;
-          }
-          return value;
-        })
-        .join(",")
-    ).join("\n");
-  
-    // Kết hợp header và dữ liệu
-    const csvContent = "data:text/csv;charset=utf-8," + encodeURIComponent(header + rows);
-  
-    // Tạo một thẻ <a> để tải xuống file
+    const rows = csvData
+      .map((row) =>
+        columns
+          .map((col) => {
+            const value = row[col];
+            return typeof value === "string" ? `"${value}"` : value;
+          })
+          .join(",")
+      )
+      .join("\n");
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," + encodeURIComponent(header + rows);
     const link = document.createElement("a");
     link.setAttribute("href", csvContent);
     link.setAttribute("download", "data.csv");
     document.body.appendChild(link);
-  
-    // Kích hoạt sự kiện click để tải xuống
     link.click();
-  
-    // Xóa thẻ <a> sau khi tải xuống
     document.body.removeChild(link);
   };
 
@@ -89,12 +111,17 @@ const FileUploader = () => {
   };
 
   const handleColumnSelect = (column) => {
+    let newSelectedColumns;
+    
     if (selectedColumns.includes(column)) {
-      setSelectedColumns(selectedColumns.filter(col => col !== column));
+      newSelectedColumns = selectedColumns.filter(col => col !== column);
     } else {
-      setSelectedColumns([...selectedColumns, column]);
+      newSelectedColumns = [...selectedColumns, column];
     }
+    
+    setSelectedColumns(newSelectedColumns);
   };
+  
 
   const handleDeleteSelectedColumns = () => {
     const newColumns = columns.filter(col => !selectedColumns.includes(col));
@@ -116,22 +143,20 @@ const FileUploader = () => {
     setColumns([]); // Xóa danh sách cột
     setError(''); // Xóa thông báo lỗi
     setSuccess(''); // Xóa thông báo thành công
+    handleFileChange({ target: { files: [] } }); // Reset input file
   };
 
   const handleSelectAll = () => {
-    if (selectedColumns.length === columns.length) {
-      // Nếu đã chọn tất cả, bỏ chọn tất cả
-      setSelectedColumns([]);
-    } else {
-      // Nếu chưa chọn tất cả, chọn tất cả
-      setSelectedColumns([...columns]);
-    }
+    setSelectedColumns(selectedColumns.length === columns.length ? [] : [...columns]);
   };
+  
 
   return (
     <div>
       {/* Khung upload file */}
-      <div className="upload-container">
+      <div className="upload-container"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}>
         <input
           type="file"
           accept=".csv"
@@ -155,7 +180,7 @@ const FileUploader = () => {
         </button>
         {csvData.length > 0 && (
           <button className="change-file" onClick={handleResetFile} style={{ marginLeft: '10px' }}>
-            Đổi File
+            Reset
           </button>
         )}
       </div>
@@ -207,13 +232,22 @@ const FileUploader = () => {
               X
             </button>
             <h3>Chọn cột để xoá</h3>
-            <button className="select-all" onClick={handleSelectAll} style={{ marginBottom: '10px' }}>
-              {selectedColumns.length === columns.length ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
-            </button>
             <table className="popup-table">
               <thead>
                 <tr>
-                  <th>Chọn</th>
+                  <th>
+                  <label style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                  <input 
+                      type="checkbox" 
+                      checked={selectedColumns.length === columns.length} // Kiểm tra nếu tất cả cột đã được chọn
+                      onChange={handleSelectAll} 
+                      style={{ marginRight: '5px' }}
+                    />
+
+                    Chọn tất cả
+                  </label>
+
+                  </th>
                   <th>Tên cột</th>
                 </tr>
               </thead>
