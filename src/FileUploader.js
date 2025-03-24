@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import "./App.css"; // Import file CSS
 import Papa from "papaparse";
 
@@ -88,17 +88,33 @@ const FileUploader = () => {
       complete: (result) => {
         try {
           const columns = result.meta.fields; // Lấy danh sách cột
-          const data = result.data; // Dữ liệu dạng mảng object
-          
+          let data = result.data; // Dữ liệu dạng mảng object
+  
+          if (!columns || !data) {
+            setError("File không chứa dữ liệu hợp lệ.");
+            return;
+          }
+  
+          // Lọc bỏ các hàng rỗng hoặc không có giá trị thực sự
+          data = data.filter(row => 
+            row && Object.values(row).some(value => value && value.trim() !== "")
+          );
+  
+          if (data.length === 0) {
+            setError("File không chứa dữ liệu hợp lệ sau khi lọc.");
+            return;
+          }
+  
+          // Cập nhật state
           setColumns(columns);
           setCsvData(data);
-          setSuccess("File đã được đọc thành công.");
+          setSuccess(`File đã được đọc thành công. Tìm thấy ${data.length} dòng dữ liệu.`);
         } catch (err) {
           setError("Đã xảy ra lỗi khi đọc file: " + err.message);
         }
       },
       header: true, // Tự động coi hàng đầu tiên là tiêu đề
-      skipEmptyLines: true, // Bỏ qua các dòng trống
+      skipEmptyLines: true, // Loại bỏ các dòng trống
       error: () => {
         setError("Không thể đọc file.");
       },
@@ -110,17 +126,17 @@ const FileUploader = () => {
   };
 
   const handleDownload = () => {
-    const header = columns.join(",") + "\n";
+    const header = columns.join(",") + "";
     const rows = csvData
       .map((row) =>
         columns
           .map((col) => {
             const value = row[col];
-            return typeof value === "string" ? `"${value}"` : value;
+            return value;
           })
           .join(",")
       )
-      .join("\n");
+      .join("");
 
     const csvContent =
       "data:text/csv;charset=utf-8," + encodeURIComponent(header + rows);
