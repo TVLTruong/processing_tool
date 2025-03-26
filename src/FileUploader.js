@@ -211,7 +211,7 @@ const FileUploader = () => {
               // Nếu cột tồn tại trong định dạng mới
               if (newColumns.includes(columnKey)) {
                 // Chuyển đổi sentiment thành 1 hoặc 2
-                const sentimentValue = sentimentLabel === 'positive' ? 1 : 2;
+                  const sentimentValue = sentimentLabel === 'positive' ? 1 : sentimentLabel === 'negative' ? 2 : 3; 
                 newRow[columnKey] = sentimentValue;
               }
             }
