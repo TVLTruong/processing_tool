@@ -201,7 +201,7 @@ button.download:hover {
 
 /* Nút đóng popup */
 .close-button {
-  background-color: #ffc107; /* Màu nền */
+  background-color: #ff3007; /* Màu nền */
   color: black; /* Màu chữ */
   padding: 5px 10px; /* Kích thước nút */
   border-radius: 50%; /* Bo tròn */

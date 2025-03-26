@@ -1,0 +1,15 @@
+/* FileUploader.css */
+.progress-container {
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  progress {
+    width: 100%;
+    max-width: 300px; /* Giới hạn chiều rộng nếu muốn */
+    margin: 10px 0;
+  }
+  
+  p {
+    margin: 5px 0;
+  }

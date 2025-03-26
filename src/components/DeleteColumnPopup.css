@@ -1,0 +1,46 @@
+/* DeleteColumnPopup.css */
+.popup-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Giữ layout cố định */
+  }
+  
+  .checkbox-column {
+    width: 110px; /* Độ rộng cố định cho cột checkbox */
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .name-column {
+    width: auto; /* Để tự động điều chỉnh theo nội dung */
+    padding: 8px;
+    border: 1px solid #ddd;
+    word-wrap: break-word; /* Cho phép xuống hàng khi nội dung dài */
+    white-space: normal; /* Cho phép text wrap thay vì giữ trên một dòng */
+  }
+  
+  .popup-table th, .popup-table td {
+    vertical-align: middle;
+  }
+  
+  .select-all-label {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Khoảng cách giữa checkbox và text */
+  }
+  
+  .popup-content {
+    max-width: 40vw; /* Giới hạn chiều rộng popup */
+    overflow-x: auto; /* Thêm scroll ngang nếu cần */
+  }
+  
+  /* Optional: Tùy chỉnh thêm cho giao diện */
+  .popup-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .popup-table tr:hover {
+    background-color: #f9f9f9;
+  }
