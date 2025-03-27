@@ -328,7 +328,7 @@ const FileUploader = () => {
             columns={columns}
             selectedColumns={selectedColumns}
             handleClosePopup={handleClosePopup}
-            handleColumSelect={handleColumnSelect}
+            handleColumnSelect={handleColumnSelect}
             handleDeleteSelectedColumns={handleDeleteSelectedColumns}
             handleSelectAll={handleSelectAll}
           />

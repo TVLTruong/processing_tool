@@ -43,7 +43,10 @@ const DeleteColumnPopup = ({
                   <input
                     type="checkbox"
                     checked={selectedColumns.includes(column)}
-                    onChange={() => handleColumnSelect(column)}
+                    onChange={() => {
+                      console.log("Checkbox clicked for column:", column); // Kiểm tra
+                      handleColumnSelect(column);
+                    }}
                   />
                 </td>
                 <td className="name-column">{column}</td>
