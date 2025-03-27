@@ -55,7 +55,7 @@ const SplitSetsPopup = ({
 
   return (
     <div className="popup-overlay">
-      <div className="popup-content">
+      <div className="popup-content-2">
         <button className="close-button" onClick={handleCloseSplitPopup}>
           X
         </button>
