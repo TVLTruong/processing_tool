@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import '../App.css';
 import FileDropZone from './FileDropZone';
 import MessageDisplay from './MessageDisplay';
 import ActionButtons from './ActionButtons';
@@ -181,27 +180,31 @@ const FileUploader = () => {
     };
 
     const handleDownload = () => {
-    const header = columns.join(",") + "";
-    const rows = csvData
-        .map((row) =>
-        columns
-            .map((col) => {
-            const value = row[col];
-            return value;
-            })
-            .join(",")
-        )
-        .join("");
-
-    const csvContent =
-        "data:text/csv;charset=utf-8," + encodeURIComponent(header + rows);
-    const link = document.createElement("a");
-    link.setAttribute("href", csvContent);
-    link.setAttribute("download", "data.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    };
+      const header = columns.join(",") + "\n"; // Tiêu đề với ký tự xuống dòng
+      const rows = csvData
+          .map((row) =>
+              columns
+                  .map((col) => {
+                      const value = row[col];
+                      // Kiểm tra nếu giá trị là chuỗi thì bọc trong dấu ngoặc kép
+                      if (typeof value === "string") {
+                          return `"${value.replace(/"/g, '""')}"`; // Thoát dấu ngoặc kép nếu có
+                      }
+                      return value; // Giữ nguyên nếu không phải chuỗi
+                  })
+                  .join(",")
+          )
+          .join("\n"); // Phân tách các dòng bằng ký tự xuống dòng
+  
+      const csvContent =
+          "data:text/csv;charset=utf-8," + encodeURIComponent(header + rows);
+      const link = document.createElement("a");
+      link.setAttribute("href", csvContent);
+      link.setAttribute("download", "data.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+  };
 
     // Column deletion functions
     const handleDeleteColumns = () => setShowDeletePopup(true);
@@ -298,7 +301,6 @@ const FileUploader = () => {
           {/* Hiển thị thanh tiến trình khi đang đọc */}
           {isReading && (
             <div className="progress-container" style={{ marginTop: '10px', textAlign: 'center' }}>
-              <p>Đang đọc file...</p>
               <progress value={readProgress} max="100" />
               <p>{readProgress}%</p>
             </div>
